@@ -1,0 +1,61 @@
+### 1. Start Fabric
+cd ~/fabric-tools && ./startFabric
+
+### 2. Create a PeerAdminCard if you do not already have it
+cd ~/fabric-tools && ./createPeerAdminCard.sh
+
+# You can show cards by 
+composer card list
+
+# Cards are in ~/.composer/cards
+
+### 3. Create Project By
+yo hyperledger-composer:businessnetwork
+
+## You will be propted to input some details after running the command
+-> Business network name : [AnyName of Your Choice] // Remeber it
+-> Description of the business : Describe the network
+-> Author : Your names
+-> Author Email :Your email
+-> License: Apache-2.0 // Just hit enter
+-> Namespace : org.whatever-you-want
+
+#The above will generate the project 
+
+## Run npm install for packages
+npm install
+
+## Create a dist directory for hosting our binary .bna
+mkdir dist
+
+## Create archive which you can import to the composer playground
+composer archive create --sourceType dir --sourceName . [--archieveFile ./dist/name.bna]
+
+
+## Install the runtime
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName [your-network-name] 
+
+## Deploy,  note -- Run this in dist directory
+## Command description	-> [.bna file] should be the name of your network archive
+##			-> networkadmin.card is the name that you want to give to your card name, you can name it anything
+##			-> PeerAdmin@hlfv1 is the default account that we created using fabric tools
+##			-> -A admin is the default admin account created for PeerAdmin@...
+##			-> -S adminpw is the default password for the admin account 
+## IMPORTANT NOTICE - > This is where we create a business netword card, so you can replace networkadmin.card with your card name of choice
+composer network start -c PeerAdmin@hlfv1 -A admin -S adminpw -a [.bna file] -f networkadmin.card
+
+## Import Card 		@Params()
+## 			->networkadmin.card is the cardname that you'll have given earlier, you can run "composer card list" to show cards
+composer card import -f  networkadmin.card
+
+## Finally Run The REST command to generate RESTful api
+## The options of this will be as 	->Enter network card name to use = Enter
+##					->
+##					->
+##					->
+##					->
+composer-rest-server
+
+
+## Composer Playground
+composer-playground
